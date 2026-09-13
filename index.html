@@ -80,7 +80,7 @@ button,input{font:inherit}
         <input id="searchInput" type="text" inputmode="tel" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Buscar">
         <div class="clear" id="clear">×</div>
       </div>
-      <!-- Botón que simula el tic y copia el texto manteniendo siempre el texto "✓ OK" -->
+      <!-- Botón falso tipo "tic" que copia de forma invisible -->
       <button class="fake-tic-btn" id="fakeTicBtn">✓ OK</button>
     </div>
     <div class="list" id="list"></div>
@@ -183,10 +183,9 @@ $('searchInput').addEventListener('input',e=>{
   render();
 });
 
-// Acción al pulsar el botón falso tipo "tic / OK" (copia manteniendo siempre el texto fijo)
+// Acción al pulsar el botón falso tipo "tic / OK": copia sin tocar el input visualmente
 $('fakeTicBtn').addEventListener('click',()=>{
-  const input = $('searchInput');
-  const val = input.value.trim();
+  const val = $('searchInput').value.trim();
   if(!val) return;
   
   term = val;
@@ -194,11 +193,7 @@ $('fakeTicBtn').addEventListener('click',()=>{
   $('searchBox').classList.add('has');
   render();
 
-  // Selecciona todo el texto en el input
-  input.focus();
-  input.setSelectionRange(0, input.value.length);
-
-  // Copia directa al portapapeles permitida por iOS
+  // Copia directa al portapapeles sin enfocar ni seleccionar el input principal (evita el resaltado azul)
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(currentNumber).catch(()=>{
       fallbackCopy(currentNumber);
@@ -207,7 +202,7 @@ $('fakeTicBtn').addEventListener('click',()=>{
     fallbackCopy(currentNumber);
   }
 
-  // Destello visual de color (verde oscuro) manteniendo el texto siempre en "✓ OK"
+  // Pequeño feedback de color en el botón para saber que se pulsó, manteniendo el texto "✓ OK"
   const btn = $('fakeTicBtn');
   btn.style.background = '#28a745';
   setTimeout(()=>{
