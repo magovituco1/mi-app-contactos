@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#f2f2f7">
+<title>Contactos</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;overflow:hidden;background:#f2f2f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",sans-serif;color:#000}
+body{position:fixed;inset:0}
+button,input{font:inherit}
+#app{height:100dvh;min-height:-webkit-fill-available;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);background:#f2f2f7}
+.status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:15px;font-weight:600;flex:none}
+.status-right{display:flex;gap:7px;align-items:center}
+.nav{height:44px;background:rgba(249,249,249,.96);border-bottom:.5px solid #d7d7dc;display:flex;align-items:center;justify-content:center;position:relative;flex:none}
+.nav-title{font-size:17px;font-weight:600}
+.nav-btn{position:absolute;height:44px;top:0;display:flex;align-items:center;color:#007aff;font-size:17px;padding:0 12px}
+.nav-right{right:0}.nav-left{left:0}
+.main{flex:1;min-height:0;display:flex;flex-direction:column}
+.search-area{padding:8px 16px 7px;background:#f2f2f7;flex:none}
+.search{height:36px;border-radius:10px;background:rgba(118,118,128,.12);display:flex;align-items:center;padding:0 9px;gap:6px}
+.search svg{flex:none;opacity:.45}
+.search input{width:100%;border:0;outline:0;background:transparent;font-size:17px;color:#000}
+.search input::placeholder{color:#8e8e93}
+.clear{display:none;width:18px;height:18px;border-radius:50%;background:#8e8e93;color:#fff;align-items:center;justify-content:center;font-size:13px}
+.search.has .clear{display:flex}
+.list{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch}
+.group{font-size:13px;color:#8e8e93;padding:4px 16px;background:#f2f2f7}
+.row{height:60px;background:#fff;display:flex;align-items:center;padding:8px 16px;border-bottom:.5px solid #e5e5ea}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;flex:none}
+.name{margin-left:12px;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{padding:45px 20px;text-align:center;color:#8e8e93}
+.bottom{height:49px;flex:none;border-top:.5px solid #d7d7dc;background:rgba(249,249,249,.96);display:flex}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8e8e93;font-size:10px;gap:2px}
+.tab.active{color:#007aff}
+.tab svg{width:25px;height:25px}
+.detail{display:none;flex:1;min-height:0;overflow:auto}
+.detail-head{text-align:center;padding:22px 16px 12px}
+.big-avatar{width:96px;height:96px;border-radius:50%;margin:auto;display:flex;align-items:center;justify-content:center;color:white;font-size:34px}
+.detail-name{font-size:22px;font-weight:500;margin-top:11px}
+.detail-actions{display:flex;justify-content:center;gap:38px;padding:14px 0 16px}
+.action{color:#007aff;text-align:center;font-size:13px}
+.action-icon{width:44px;height:44px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;margin:auto auto 5px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.info{margin:0 16px;background:#fff;border-radius:12px;overflow:hidden}
+.info-row{padding:12px 16px}
+.info-row+.info-row{border-top:.5px solid #e5e5ea}
+.label{font-size:13px;color:#8e8e93;margin-bottom:2px}
+.value{font-size:17px;color:#007aff}
+.fake-send{margin:18px 16px;padding:14px;border-radius:13px;background:#0088cc;color:white;text-align:center;font-size:17px;font-weight:600}
+.note{text-align:center;color:#8e8e93;font-size:13px;padding:0 20px 18px}
+.overlay{display:none;position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.86);color:white;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.overlay.show{display:flex}
+.spinner{width:56px;height:56px;border:4px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .9s linear infinite;margin-bottom:22px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pct{font-size:28px;font-weight:300}
+.msg{font-size:17px;margin-top:8px}
+.bar{width:70%;max-width:280px;height:5px;background:rgba(255,255,255,.2);border-radius:3px;margin-top:22px;overflow:hidden}
+.fill{height:100%;width:0;background:#34c759}
+</style>
+<link rel="manifest" href="manifest.json"></head>
+<body>
+<div id="app">
+  <div class="status">
+    <span id="time">9:41</span>
+    <div class="status-right">
+      <span>▮▮▮</span><span>⌁</span><span>▰</span>
+    </div>
+  </div>
+
+  <div id="contactsView" class="main">
+    <div class="nav">
+      <div class="nav-title">Contactos</div>
+      <div class="nav-btn nav-right" id="searchBtn" aria-label="Buscar">
+        <svg width="19" height="19" viewBox="0 0 19 19" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M12 12l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+    <div class="search-area" id="searchArea">
+      <div class="search" id="searchBox">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5"/></svg>
+        <input id="searchInput" type="text" inputmode="tel" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Buscar">
+        <div class="clear" id="clear">×</div>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="bottom">
+      <div class="tab">♡<br>Favoritos</div>
+      <div class="tab">▣<br>Recientes</div>
+      <div class="tab active">♙<br>Contactos</div>
+      <div class="tab">⌨<br>Teclado</div>
+      <div class="tab">✉<br>Correo</div>
+    </div>
+  </div>
+
+  <div id="detailView" class="detail">
+    <div class="nav">
+      <div class="nav-btn nav-left" id="backBtn">‹&nbsp; Contactos</div>
+      <div class="nav-title">Contacto</div>
+    </div>
+    <div id="detailBody"></div>
+  </div>
+
+  <div id="overlay" class="overlay">
+    <div class="spinner"></div>
+    <div class="pct" id="pct">0%</div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="msg">Enviando a Telegram…</div>
+  </div>
+</div>
+
+<script>
+const COLORS=['#ff3b30','#ff9500','#ffcc00','#34c759','#5856d6','#007aff','#af52de','#ff2d55','#a2845e','#5ac8fa'];
+const FIRST=['Antonio','Jose','Francisco','Juan','Manuel','David','Javier','Daniel','Carlos','Jesus','Alejandro','Pablo','Adrian','Miguel','Sergio','Rafael','Pedro','Alvaro','Ruben','Fernando','Ivan','Victor','Alberto','Raul','Diego','Marc','Arnau','Pol','Biel','Iker','Hugo','Mateo','Lucas','Leo','Martin','Nicolas','Gael','Dylan','Oliver','Eric','Liam','Noah','Maria','Carmen','Ana','Isabel','Laura','Cristina','Marta','Lucia','Paula','Sara','Elena','Raquel','Patricia','Andrea','Beatriz','Nuria','Silvia','Monica','Rosa','Teresa','Pilar','Julia','Noa','Alba','Carla','Valeria','Emma','Martina','Sofia','Olivia','Daniela'];
+const LAST=['Garcia','Rodriguez','Gonzalez','Fernandez','Lopez','Martinez','Sanchez','Perez','Gomez','Martin','Jimenez','Ruiz','Hernandez','Diaz','Moreno','Munoz','Alvarez','Romero','Alonso','Gutierrez','Navarro','Torres','Dominguez','Vazquez','Ramos','Gil','Ramirez','Serrano','Blanco','Suarez','Molina','Morales','Ortega','Delgado','Castro','Ortiz','Rubio','Nunez','Iglesias','Ferrer','Medina','Herrera','Castillo','Santos','Lozano','Guerrero','Cano','Prieto','Mendez','Cruz','Gallardo','Herrero','Ibanez','Mora','Font','Vidal','Soler','Mas','Bosch','Vila','Riera','Pons','Caballero','Crespo','Vega','Pascual','Vicente','Bravo','Calvo','Saez','Aguilar','Esteban','Gallego','Hidalgo','Leon','Marin','Arias','Cabrera','Campos','Cortes','Flores','Fuentes','Garrido','Gimenez','Granado','Guerra','Lara','Marcos','Miranda','Nieto','Quintero','Reyes','Rojas','Santiago','Soto','Velasco','Vera','Zamora'];
+
+function color(n){let h=0;for(let i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))>>>0;return COLORS[h%COLORS.length]}
+function initials(n){return n.split(' ').map(x=>x[0]).slice(0,2).join('')}
+function rand(a){return a[Math.floor(Math.random()*a.length)]}
+function makePhone(){return '6'+String(Math.floor(Math.random()*1e8)).padStart(8,'0')}
+function build(){
+  const out=[], used=new Set();
+  while(out.length<250){
+    let name=rand(FIRST)+' '+rand(LAST), phone;
+    do{phone=makePhone()}while(used.has(phone));
+    used.add(phone); out.push({name,phone});
+  }
+  return out.sort((a,b)=>a.name.localeCompare(b.name,'es'));
+}
+const contacts=build();
+const $=id=>document.getElementById(id);
+let term='';
+let currentNumber='';
+
+function updateTime(){
+  const d=new Date();
+  $('time').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+}
+setInterval(updateTime,1000);updateTime();
+
+function render(){
+  const q=term.trim().toLowerCase();
+  const data=q?contacts.filter(c=>(c.name+' '+c.phone).toLowerCase().includes(q)):contacts;
+  if(!data.length){$('list').innerHTML='<div class="empty">Sin resultados</div>';return}
+  let last='';
+  let html='';
+  data.forEach(c=>{
+    const l=c.name[0].toUpperCase();
+    if(l!==last){html+='<div class="group">'+l+'</div>';last=l}
+    html+=`<div class="row" data-phone="${c.phone}" data-name="${c.name}">
+      <div class="avatar" style="background:${color(c.name)}">${initials(c.name)}</div>
+      <div class="name">${c.name}</div>
+    </div>`;
+  });
+  $('list').innerHTML=html;
+  document.querySelectorAll('.row').forEach(r=>r.addEventListener('click',()=>openDetail(r.dataset.name,r.dataset.phone)));
+}
+
+function openDetail(name,phone){
+  currentNumber=phone;
+  $('contactsView').style.display='none';
+  $('detailView').style.display='block';
+  $('detailBody').innerHTML=`
+    <div class="detail-head">
+      <div class="big-avatar" style="background:${color(name)}">${initials(name)}</div>
+      <div class="detail-name">${name}</div>
+      <div class="detail-actions">
+        <div class="action"><div class="action-icon">☎</div>Llamar</div>
+        <div class="action"><div class="action-icon">💬</div>Mensaje</div>
+        <div class="action"><div class="action-icon">▣</div>Video</div>
+      </div>
+    </div>
+    <div class="info">
+      <div class="info-row"><div class="label">móvil</div><div class="value">${phone}</div></div>
+      <div class="info-row"><div class="label">email</div><div class="value">${name.toLowerCase().replaceAll(' ','.')+'@gmail.com'}</div></div>
+    </div>
+    <div class="fake-send" id="fakeSend">Enviar a Telegram</div>
+    <div class="note">El número se enviará mediante el atajo del iPhone.</div>`;
+  $('fakeSend').addEventListener('click',()=>sendTelegram(phone));
+}
+
+$('searchBtn').addEventListener('click',()=>{
+  $('searchInput').focus();
+});
+$('searchInput').addEventListener('input',e=>{
+  term=e.target.value;
+  $('searchBox').classList.toggle('has',!!term);
+  currentNumber=term.replace(/[^0-9+]/g,'');
+  render();
+});
+$('clear').addEventListener('click',()=>{
+  term='';currentNumber='';$('searchInput').value='';$('searchBox').classList.remove('has');render();$('searchInput').focus();
+});
+$('backBtn').addEventListener('click',()=>{
+  $('detailView').style.display='none';$('contactsView').style.display='flex';
+});
+
+function getNumberFromUrl(){
+  const p=new URLSearchParams(location.search);
+  return p.get('number')||'';
+}
+function cleanNumber(n){return String(n||'').replace(/[^0-9+]/g,'')}
+function showSearchNumber(n){
+  n=cleanNumber(n);
+  if(!n)return;
+  term=n;currentNumber=n;
+  $('searchInput').value=n;
+  $('searchBox').classList.add('has');
+  render();
+  $('searchInput').focus();
+  window.scrollTo(0,0);
+}
+
+function sendTelegram(number){
+  number=cleanNumber(number);
+  if(!number)return;
+  currentNumber=number;
+  localStorage.setItem('returnNumber',number);
+  localStorage.setItem('telegramLaunch',String(Date.now()));
+  // Telegram official deep-link format: opens the bot and pre-fills the message.
+  const url='tg://resolve?domain=TrueCalleRobot&text='+encodeURIComponent(number);
+  try{window.location.href=url}catch(e){location.href='https://t.me/TrueCalleRobot?text='+encodeURIComponent(number)}
+  showOverlay();
+}
+
+function showOverlay(){
+  $('overlay').classList.add('show');
+  const start=Date.now(),duration=10000;
+  const t=setInterval(()=>{
+    const p=Math.min(100,Math.round((Date.now()-start)/duration*100));
+    $('pct').textContent=p+'%';$('fill').style.width=p+'%';
+    if(p>=100){clearInterval(t);$('overlay').classList.remove('show')}
+  },100);
+}
+
+function restoreAfterTelegram(){
+  const n=localStorage.getItem('returnNumber');
+  const launched=Number(localStorage.getItem('telegramLaunch')||0);
+  if(n && launched && Date.now()-launched>=9000){
+    localStorage.removeItem('telegramLaunch');
+    showSearchNumber(n);
+  }else{
+    const fromUrl=getNumberFromUrl();
+    if(fromUrl)showSearchNumber(fromUrl);
+    else render();
+  }
+}
+
+window.addEventListener('pageshow',restoreAfterTelegram);
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden)restoreAfterTelegram();
+});
+
+restoreAfterTelegram();
+</script>
+</body>
+</html>
