@@ -176,7 +176,7 @@ $('searchInput').addEventListener('input',e=>{
   render();
 });
 
-// Captura inmediata al pulsar el tic/Enter del teclado del móvil
+// Método infalible nativo para copiar al portapapeles en iOS al pulsar el tic/OK
 $('searchInput').addEventListener('keydown',e=>{
   if(e.key==='Enter'){
     e.preventDefault();
@@ -186,9 +186,19 @@ $('searchInput').addEventListener('keydown',e=>{
       currentNumber = val.replace(/[^0-9+]/g,'');
       $('searchBox').classList.add('has');
       render();
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(currentNumber).catch(()=>{});
-      }
+
+      // Forzar copia limpia mediante elemento temporal compatible con Safari PWA
+      const aux = document.createElement('textarea');
+      aux.value = currentNumber;
+      aux.style.position = 'fixed';
+      aux.style.opacity = '0';
+      document.body.appendChild(aux);
+      aux.focus();
+      aux.select();
+      try {
+        document.execCommand('copy');
+      } catch(err) {}
+      document.body.removeChild(aux);
     }
     $('searchInput').blur();
   }
