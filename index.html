@@ -33,7 +33,7 @@ button,input{font:inherit}
 .avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;flex:none}
 .name{margin-left:12px;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .empty{padding:45px 20px;text-align:center;color:#8e8e93}
-.bottom{height:49px;flex:none;border-top:.5px solid #d7d7dc;background:rgba(249,249,249,.96);display:flex;padding-bottom:env(safe-area-inset-bottom);box-sizing:content-box}
+.bottom{height:49px;flex:none;border-top:.5px solid #d7d7dc;background:rgba(249,249,249,.96);display:flex;padding-bottom:calc(env(safe-area-inset-bottom) + 6px);box-sizing:content-box}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8e8e93;font-size:10px;gap:2px}
 .tab.active{color:#007aff}
 .tab svg{width:25px;height:25px}
@@ -208,7 +208,7 @@ function showSearchNumber(n){
   if(!n)return;
   term=n;currentNumber=n;
   $('searchInput').value=n;
-  $('searchBox'].classList.add('has');
+  $('searchBox').classList.add('has');
   render();
   $('searchInput').focus();
   window.scrollTo(0,0);
