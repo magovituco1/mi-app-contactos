@@ -27,8 +27,8 @@ button,input{font:inherit}
 .clear{display:none;width:18px;height:18px;border-radius:50%;background:#8e8e93;color:#fff;align-items:center;justify-content:center;font-size:13px}
 .search.has .clear{display:flex}
 
-/* Botón falso de "Tic / OK" que actúa como copia */
-.fake-tic-btn{display:none;height:36px;padding:0 12px;background:#34c759;color:#fff;border-radius:10px;font-size:15px;font-weight:600;align-items:center;justify-content:center;border:0;gap:4px;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+/* Botón falso tipo "tic" fijo que solo muestra "✓ OK" */
+.fake-tic-btn{display:none;height:36px;padding:0 12px;background:#34c759;color:#fff;border-radius:10px;font-size:15px;font-weight:600;align-items:center;justify-content:center;border:0;gap:4px;box-shadow:0 1px 2px rgba(0,0,0,.15);transition:background .2s}
 .search.has ~ .fake-tic-btn{display:flex}
 
 .list{position:relative;flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#fff}
@@ -80,7 +80,7 @@ button,input{font:inherit}
         <input id="searchInput" type="text" inputmode="tel" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Buscar">
         <div class="clear" id="clear">×</div>
       </div>
-      <!-- Botón falso tipo "tic" que realiza la selección y copia total -->
+      <!-- Botón que simula el tic y copia el texto manteniendo siempre el texto "✓ OK" -->
       <button class="fake-tic-btn" id="fakeTicBtn">✓ OK</button>
     </div>
     <div class="list" id="list"></div>
@@ -183,7 +183,7 @@ $('searchInput').addEventListener('input',e=>{
   render();
 });
 
-// Acción al pulsar el botón falso tipo "tic / OK"
+// Acción al pulsar el botón falso tipo "tic / OK" (copia manteniendo siempre el texto fijo)
 $('fakeTicBtn').addEventListener('click',()=>{
   const input = $('searchInput');
   const val = input.value.trim();
@@ -194,11 +194,11 @@ $('fakeTicBtn').addEventListener('click',()=>{
   $('searchBox').classList.add('has');
   render();
 
-  // Selecciona todo el texto visualmente dentro del input
+  // Selecciona todo el texto en el input
   input.focus();
   input.setSelectionRange(0, input.value.length);
 
-  // Copia directa al portapapeles permitida por iOS al ser un toque táctil legítimo
+  // Copia directa al portapapeles permitida por iOS
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(currentNumber).catch(()=>{
       fallbackCopy(currentNumber);
@@ -207,14 +207,12 @@ $('fakeTicBtn').addEventListener('click',()=>{
     fallbackCopy(currentNumber);
   }
 
-  // Feedback visual de éxito en el botón
+  // Destello visual de color (verde oscuro) manteniendo el texto siempre en "✓ OK"
   const btn = $('fakeTicBtn');
-  btn.textContent = '✓ Copiado';
   btn.style.background = '#28a745';
   setTimeout(()=>{
-    btn.textContent = '✓ OK';
     btn.style.background = '#34c759';
-  }, 1500);
+  }, 350);
 });
 
 function fallbackCopy(text) {
