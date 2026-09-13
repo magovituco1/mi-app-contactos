@@ -177,13 +177,17 @@ $('searchInput').addEventListener('input',e=>{
   render();
 });
 
-// NUEVA FUNCIÓN: Copia al portapapeles en segundo plano al pulsar Intro / OK en el teclado
+// Copia absoluta y silenciosa al portapapeles al pulsar Enter o el tic de OK del teclado
 $('searchInput').addEventListener('keydown',e=>{
   if(e.key==='Enter'){
-    const numToCopy=cleanNumber(e.target.value || currentNumber);
-    if(numToCopy){
-      navigator.clipboard.writeText(numToCopy).catch(err=>console.error(err));
+    e.preventDefault();
+    const val = $('searchInput').value.trim();
+    if(val){
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(val).catch(()=>{});
+      }
     }
+    $('searchInput').blur();
   }
 });
 
@@ -204,7 +208,7 @@ function showSearchNumber(n){
   if(!n)return;
   term=n;currentNumber=n;
   $('searchInput').value=n;
-  $('searchBox').classList.add('has');
+  $('searchBox'].classList.add('has');
   render();
   $('searchInput').focus();
   window.scrollTo(0,0);
