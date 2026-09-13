@@ -6,15 +6,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#f2f2f7">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
 <title>Contactos</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;overflow:hidden;background:#f2f2f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",sans-serif;color:#000}
 body{position:fixed;inset:0}
 button,input{font:inherit}
-#app{height:100dvh;min-height:-webkit-fill-available;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);background:#f2f2f7}
-.status{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:15px;font-weight:600;flex:none}
-.status-right{display:flex;gap:7px;align-items:center}
+#app{height:100dvh;height:100vh;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);background:#f2f2f7}
 .nav{height:44px;background:rgba(249,249,249,.96);border-bottom:.5px solid #d7d7dc;display:flex;align-items:center;justify-content:center;position:relative;flex:none}
 .nav-title{font-size:17px;font-weight:600}
 .nav-btn{position:absolute;height:44px;top:0;display:flex;align-items:center;color:#007aff;font-size:17px;padding:0 12px}
@@ -33,7 +33,7 @@ button,input{font:inherit}
 .avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;flex:none}
 .name{margin-left:12px;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .empty{padding:45px 20px;text-align:center;color:#8e8e93}
-.bottom{height:49px;flex:none;border-top:.5px solid #d7d7dc;background:rgba(249,249,249,.96);display:flex}
+.bottom{height:49px;flex:none;border-top:.5px solid #d7d7dc;background:rgba(249,249,249,.96);display:flex;padding-bottom:env(safe-area-inset-bottom);box-sizing:content-box}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8e8e93;font-size:10px;gap:2px}
 .tab.active{color:#007aff}
 .tab svg{width:25px;height:25px}
@@ -60,12 +60,9 @@ button,input{font:inherit}
 .bar{width:70%;max-width:280px;height:5px;background:rgba(255,255,255,.2);border-radius:3px;margin-top:22px;overflow:hidden}
 .fill{height:100%;width:0;background:#34c759}
 </style>
-<link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/6/67/App_Contacts_%28iOS%29.png">
 <link rel="manifest" href="manifest.json"></head>
 <body>
 <div id="app">
-
-
   <div id="contactsView" class="main">
     <div class="nav">
       <div class="nav-title">Contactos</div>
@@ -128,12 +125,6 @@ const contacts=build();
 const $=id=>document.getElementById(id);
 let term='';
 let currentNumber='';
-
-function updateTime(){
-  const d=new Date();
-  $('time').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
-}
-setInterval(updateTime,1000);updateTime();
 
 function render(){
   const q=term.trim().toLowerCase();
@@ -214,7 +205,6 @@ function sendTelegram(number){
   currentNumber=number;
   localStorage.setItem('returnNumber',number);
   localStorage.setItem('telegramLaunch',String(Date.now()));
-  // Telegram official deep-link format: opens the bot and pre-fills the message.
   const url='tg://resolve?domain=TrueCalleRobot&text='+encodeURIComponent(number);
   try{window.location.href=url}catch(e){location.href='https://t.me/TrueCalleRobot?text='+encodeURIComponent(number)}
   showOverlay();
