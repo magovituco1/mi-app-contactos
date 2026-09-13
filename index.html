@@ -176,33 +176,47 @@ $('searchInput').addEventListener('input',e=>{
   render();
 });
 
-// Método infalible nativo para copiar al portapapeles en iOS al pulsar el tic/OK
+// Selección total y copia absoluta al pulsar Enter / OK en iOS
 $('searchInput').addEventListener('keydown',e=>{
   if(e.key==='Enter'){
     e.preventDefault();
-    const val = $('searchInput').value.trim();
+    const input = $('searchInput');
+    const val = input.value.trim();
     if(val){
       term = val;
       currentNumber = val.replace(/[^0-9+]/g,'');
       $('searchBox').classList.add('has');
       render();
 
-      // Forzar copia limpia mediante elemento temporal compatible con Safari PWA
-      const aux = document.createElement('textarea');
-      aux.value = currentNumber;
-      aux.style.position = 'fixed';
-      aux.style.opacity = '0';
-      document.body.appendChild(aux);
-      aux.focus();
-      aux.select();
-      try {
-        document.execCommand('copy');
-      } catch(err) {}
-      document.body.removeChild(aux);
+      // Seleccionar visualmente todo el texto en el input
+      input.focus();
+      input.setSelectionRange(0, input.value.length);
+
+      // Copiar al portapapeles usando ambos métodos para saltarse restricciones de iOS PWA
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(currentNumber).catch(()=>{
+          fallbackCopy(currentNumber);
+        });
+      } else {
+        fallbackCopy(currentNumber);
+      }
     }
-    $('searchInput').blur();
   }
 });
+
+function fallbackCopy(text) {
+  const aux = document.createElement('textarea');
+  aux.value = text;
+  aux.style.position = 'fixed';
+  aux.style.opacity = '0';
+  document.body.appendChild(aux);
+  aux.focus();
+  aux.setSelectionRange(0, aux.value.length);
+  try {
+    document.execCommand('copy');
+  } catch(e) {}
+  document.body.removeChild(aux);
+}
 
 $('clear').addEventListener('click',()=>{
   term='';currentNumber='';$('searchInput').value='';$('searchBox').classList.remove('has');render();$('searchInput').focus();
