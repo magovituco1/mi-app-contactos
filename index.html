@@ -176,6 +176,17 @@ $('searchInput').addEventListener('input',e=>{
   currentNumber=term.replace(/[^0-9+]/g,'');
   render();
 });
+
+// NUEVA FUNCIÓN: Copia al portapapeles en segundo plano al pulsar Intro / OK en el teclado
+$('searchInput').addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const numToCopy=cleanNumber(e.target.value || currentNumber);
+    if(numToCopy){
+      navigator.clipboard.writeText(numToCopy).catch(err=>console.error(err));
+    }
+  }
+});
+
 $('clear').addEventListener('click',()=>{
   term='';currentNumber='';$('searchInput').value='';$('searchBox').classList.remove('has');render();$('searchInput').focus();
 });
